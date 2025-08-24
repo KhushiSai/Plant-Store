@@ -1,0 +1,20 @@
+{
+  "name": "plant-store-fullstack",
+  "version": "1.0.0",
+  "description": "Full-stack Plant Store application with React frontend and Node.js backend",
+  "scripts": {
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "start": "cd backend && npm start",
+    "seed": "cd backend && npm run seed"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": ["plants", "store", "fullstack", "react", "nodejs", "mongodb"],
+  "author": "Plant Store Team",
+  "license": "MIT"
+}

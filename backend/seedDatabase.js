@@ -1,0 +1,663 @@
+const mongoose = require('mongoose');
+require('dotenv').config();
+
+const Plant = require('./models/Plant');
+
+const plants = [
+  // Indoor Plants
+  {
+    name: 'Monstera Deliciosa',
+    price: 1299,
+    categories: ['Indoor', 'Air Purifying', 'Home Decor'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208086/pexels-photo-6208086.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Swiss cheese plant with stunning split leaves',
+    scientificName: 'Monstera deliciosa',
+    careLevel: 'Medium',
+    sunlight: 'Medium',
+    watering: 'Medium'
+  },
+  {
+    name: 'Snake Plant',
+    price: 599,
+    categories: ['Indoor', 'Air Purifying', 'Low Maintenance'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/4751978/pexels-photo-4751978.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Hardy plant perfect for beginners',
+    scientificName: 'Sansevieria trifasciata',
+    careLevel: 'Easy',
+    sunlight: 'Low',
+    watering: 'Low'
+  },
+  {
+    name: 'Fiddle Leaf Fig',
+    price: 1899,
+    categories: ['Indoor', 'Home Decor', 'Statement Plant'],
+    inStock: false,
+    image: 'https://images.pexels.com/photos/6208071/pexels-photo-6208071.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Elegant tree with large violin-shaped leaves',
+    scientificName: 'Ficus lyrata',
+    careLevel: 'Hard',
+    sunlight: 'Bright',
+    watering: 'Medium'
+  },
+  {
+    name: 'Pothos Golden',
+    price: 399,
+    categories: ['Indoor', 'Air Purifying', 'Hanging', 'Low Maintenance'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/4503273/pexels-photo-4503273.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Trailing vine perfect for shelves and hanging baskets',
+    scientificName: 'Epipremnum aureum',
+    careLevel: 'Easy',
+    sunlight: 'Medium',
+    watering: 'Medium'
+  },
+  {
+    name: 'Peace Lily',
+    price: 799,
+    categories: ['Indoor', 'Air Purifying', 'Flowering'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/4751949/pexels-photo-4751949.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Beautiful flowering plant that thrives in low light',
+    scientificName: 'Spathiphyllum',
+    careLevel: 'Medium',
+    sunlight: 'Low',
+    watering: 'Medium'
+  },
+  {
+    name: 'Rubber Plant',
+    price: 999,
+    categories: ['Indoor', 'Air Purifying', 'Home Decor'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/4751952/pexels-photo-4751952.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Glossy leaves and robust growth',
+    scientificName: 'Ficus elastica',
+    careLevel: 'Easy',
+    sunlight: 'Medium',
+    watering: 'Medium'
+  },
+  {
+    name: 'ZZ Plant',
+    price: 899,
+    categories: ['Indoor', 'Low Maintenance', 'Air Purifying'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208074/pexels-photo-6208074.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Nearly indestructible with glossy leaves',
+    scientificName: 'Zamioculcas zamiifolia',
+    careLevel: 'Easy',
+    sunlight: 'Low',
+    watering: 'Low'
+  },
+  {
+    name: 'Philodendron Heartleaf',
+    price: 499,
+    categories: ['Indoor', 'Hanging', 'Low Maintenance'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/4503267/pexels-photo-4503267.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Heart-shaped leaves on trailing vines',
+    scientificName: 'Philodendron hederaceum',
+    careLevel: 'Easy',
+    sunlight: 'Medium',
+    watering: 'Medium'
+  },
+  {
+    name: 'Spider Plant',
+    price: 349,
+    categories: ['Indoor', 'Air Purifying', 'Hanging', 'Pet Safe'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208087/pexels-photo-6208087.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Easy-care plant with spider-like foliage',
+    scientificName: 'Chlorophytum comosum',
+    careLevel: 'Easy',
+    sunlight: 'Medium',
+    watering: 'Medium'
+  },
+  {
+    name: 'Money Plant',
+    price: 299,
+    categories: ['Indoor', 'Home Decor', 'Low Maintenance', 'Hanging'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208078/pexels-photo-6208078.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Brings good luck and positive energy',
+    scientificName: 'Epipremnum aureum',
+    careLevel: 'Easy',
+    sunlight: 'Medium',
+    watering: 'Medium'
+  },
+  // Succulents
+  {
+    name: 'Jade Plant',
+    price: 449,
+    categories: ['Succulent', 'Indoor', 'Low Maintenance'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208092/pexels-photo-6208092.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Symbol of prosperity with thick, fleshy leaves',
+    scientificName: 'Crassula ovata',
+    careLevel: 'Easy',
+    sunlight: 'Bright',
+    watering: 'Low'
+  },
+  {
+    name: 'Aloe Vera',
+    price: 399,
+    categories: ['Succulent', 'Medicinal', 'Low Maintenance'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208088/pexels-photo-6208088.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Healing properties and easy care',
+    scientificName: 'Aloe barbadensis',
+    careLevel: 'Easy',
+    sunlight: 'Bright',
+    watering: 'Low'
+  },
+  {
+    name: 'Echeveria Rose',
+    price: 299,
+    categories: ['Succulent', 'Colorful', 'Small'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208095/pexels-photo-6208095.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Rose-shaped succulent with beautiful colors',
+    scientificName: 'Echeveria elegans',
+    careLevel: 'Easy',
+    sunlight: 'Bright',
+    watering: 'Low'
+  },
+  {
+    name: 'String of Pearls',
+    price: 599,
+    categories: ['Succulent', 'Hanging', 'Unique'],
+    inStock: false,
+    image: 'https://images.pexels.com/photos/6208091/pexels-photo-6208091.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Unique trailing succulent with bead-like leaves',
+    scientificName: 'Senecio rowleyanus',
+    careLevel: 'Medium',
+    sunlight: 'Bright',
+    watering: 'Low'
+  },
+  {
+    name: 'Haworthia Zebra',
+    price: 349,
+    categories: ['Succulent', 'Small', 'Desktop'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208089/pexels-photo-6208089.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Zebra-striped succulent perfect for desks',
+    scientificName: 'Haworthia fasciata',
+    careLevel: 'Easy',
+    sunlight: 'Medium',
+    watering: 'Low'
+  },
+  // Outdoor Plants
+  {
+    name: 'Rose Bush Red',
+    price: 699,
+    categories: ['Outdoor', 'Flowering', 'Fragrant'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Classic red roses with beautiful fragrance',
+    scientificName: 'Rosa rubiginosa',
+    careLevel: 'Medium',
+    sunlight: 'Bright',
+    watering: 'High'
+  },
+  {
+    name: 'Bougainvillea',
+    price: 549,
+    categories: ['Outdoor', 'Flowering', 'Climbing'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/4751958/pexels-photo-4751958.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Vibrant flowering vine for outdoor spaces',
+    scientificName: 'Bougainvillea spectabilis',
+    careLevel: 'Easy',
+    sunlight: 'Bright',
+    watering: 'Medium'
+  },
+  {
+    name: 'Marigold Orange',
+    price: 199,
+    categories: ['Outdoor', 'Flowering', 'Annual'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/4751954/pexels-photo-4751954.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Bright orange flowers perfect for gardens',
+    scientificName: 'Tagetes patula',
+    careLevel: 'Easy',
+    sunlight: 'Bright',
+    watering: 'Medium'
+  },
+  {
+    name: 'Jasmine White',
+    price: 449,
+    categories: ['Outdoor', 'Flowering', 'Fragrant', 'Climbing'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/4751961/pexels-photo-4751961.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Fragrant white flowers and climbing habit',
+    scientificName: 'Jasminum officinale',
+    careLevel: 'Medium',
+    sunlight: 'Bright',
+    watering: 'Medium'
+  },
+  {
+    name: 'Hibiscus Red',
+    price: 799,
+    categories: ['Outdoor', 'Flowering', 'Tropical'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/4751956/pexels-photo-4751956.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Large tropical flowers in vibrant red',
+    scientificName: 'Hibiscus rosa-sinensis',
+    careLevel: 'Medium',
+    sunlight: 'Bright',
+    watering: 'High'
+  },
+  // Additional Indoor Plants
+  {
+    name: 'Boston Fern',
+    price: 649,
+    categories: ['Indoor', 'Hanging', 'Air Purifying'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208073/pexels-photo-6208073.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Lush fern perfect for hanging baskets',
+    scientificName: 'Nephrolepis exaltata',
+    careLevel: 'Medium',
+    sunlight: 'Low',
+    watering: 'High'
+  },
+  {
+    name: 'Calathea Medallion',
+    price: 999,
+    categories: ['Indoor', 'Colorful', 'Prayer Plant'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208076/pexels-photo-6208076.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Beautiful patterned leaves that move with light',
+    scientificName: 'Calathea roseopicta',
+    careLevel: 'Hard',
+    sunlight: 'Low',
+    watering: 'High'
+  },
+  {
+    name: 'Dracaena Marginata',
+    price: 1199,
+    categories: ['Indoor', 'Air Purifying', 'Tall'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208075/pexels-photo-6208075.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Dragon tree with spiky red-edged leaves',
+    scientificName: 'Dracaena marginata',
+    careLevel: 'Easy',
+    sunlight: 'Medium',
+    watering: 'Low'
+  },
+  {
+    name: 'Aglaonema Pink',
+    price: 849,
+    categories: ['Indoor', 'Colorful', 'Low Light'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208093/pexels-photo-6208093.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Colorful foliage in shades of pink and green',
+    scientificName: 'Aglaonema commutatum',
+    careLevel: 'Easy',
+    sunlight: 'Low',
+    watering: 'Medium'
+  },
+  {
+    name: 'Anthurium Red',
+    price: 1099,
+    categories: ['Indoor', 'Flowering', 'Colorful'],
+    inStock: false,
+    image: 'https://images.pexels.com/photos/6208077/pexels-photo-6208077.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Heart-shaped red flowers and glossy leaves',
+    scientificName: 'Anthurium andraeanum',
+    careLevel: 'Medium',
+    sunlight: 'Medium',
+    watering: 'Medium'
+  },
+  // More Succulents
+  {
+    name: 'Barrel Cactus',
+    price: 799,
+    categories: ['Succulent', 'Cactus', 'Desert'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208094/pexels-photo-6208094.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Round barrel-shaped cactus with spines',
+    scientificName: 'Echinocactus grusonii',
+    careLevel: 'Easy',
+    sunlight: 'Bright',
+    watering: 'Low'
+  },
+  {
+    name: 'Prickly Pear Cactus',
+    price: 549,
+    categories: ['Succulent', 'Cactus', 'Edible'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208096/pexels-photo-6208096.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Flat padded cactus with edible fruits',
+    scientificName: 'Opuntia ficus-indica',
+    careLevel: 'Easy',
+    sunlight: 'Bright',
+    watering: 'Low'
+  },
+  {
+    name: 'Sedum Mix',
+    price: 399,
+    categories: ['Succulent', 'Ground Cover', 'Colorful'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208097/pexels-photo-6208097.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Mixed varieties of colorful sedum',
+    scientificName: 'Sedum species',
+    careLevel: 'Easy',
+    sunlight: 'Bright',
+    watering: 'Low'
+  },
+  {
+    name: 'Lithops Living Stones',
+    price: 299,
+    categories: ['Succulent', 'Unique', 'Rare'],
+    inStock: false,
+    image: 'https://images.pexels.com/photos/6208098/pexels-photo-6208098.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Stone-like succulents that blend with rocks',
+    scientificName: 'Lithops species',
+    careLevel: 'Hard',
+    sunlight: 'Bright',
+    watering: 'Low'
+  },
+  {
+    name: 'Burro\'s Tail',
+    price: 649,
+    categories: ['Succulent', 'Hanging', 'Trailing'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208099/pexels-photo-6208099.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Trailing succulent with plump blue-green leaves',
+    scientificName: 'Sedum morganianum',
+    careLevel: 'Easy',
+    sunlight: 'Bright',
+    watering: 'Low'
+  },
+  // More Outdoor Plants
+  {
+    name: 'Lavender English',
+    price: 599,
+    categories: ['Outdoor', 'Herb', 'Fragrant', 'Medicinal'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208100/pexels-photo-6208100.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Aromatic herb with purple flower spikes',
+    scientificName: 'Lavandula angustifolia',
+    careLevel: 'Easy',
+    sunlight: 'Bright',
+    watering: 'Low'
+  },
+  {
+    name: 'Sunflower Giant',
+    price: 249,
+    categories: ['Outdoor', 'Flowering', 'Annual', 'Tall'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208101/pexels-photo-6208101.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Tall sunflowers with large golden blooms',
+    scientificName: 'Helianthus annuus',
+    careLevel: 'Easy',
+    sunlight: 'Bright',
+    watering: 'Medium'
+  },
+  {
+    name: 'Petunia Mixed',
+    price: 199,
+    categories: ['Outdoor', 'Flowering', 'Annual', 'Colorful'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208102/pexels-photo-6208102.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Colorful trumpet-shaped flowers',
+    scientificName: 'Petunia hybrida',
+    careLevel: 'Easy',
+    sunlight: 'Bright',
+    watering: 'Medium'
+  },
+  {
+    name: 'Geranium Red',
+    price: 349,
+    categories: ['Outdoor', 'Flowering', 'Fragrant'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208103/pexels-photo-6208103.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Classic red geraniums with aromatic leaves',
+    scientificName: 'Pelargonium hortorum',
+    careLevel: 'Easy',
+    sunlight: 'Bright',
+    watering: 'Medium'
+  },
+  {
+    name: 'Fuchsia Hanging',
+    price: 549,
+    categories: ['Outdoor', 'Flowering', 'Hanging'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208104/pexels-photo-6208104.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Elegant drooping flowers in bright colors',
+    scientificName: 'Fuchsia hybrida',
+    careLevel: 'Medium',
+    sunlight: 'Medium',
+    watering: 'High'
+  },
+  // Herbs and Edibles
+  {
+    name: 'Basil Sweet',
+    price: 199,
+    categories: ['Herb', 'Edible', 'Fragrant', 'Indoor'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208105/pexels-photo-6208105.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Essential cooking herb with sweet aroma',
+    scientificName: 'Ocimum basilicum',
+    careLevel: 'Easy',
+    sunlight: 'Bright',
+    watering: 'Medium'
+  },
+  {
+    name: 'Mint Fresh',
+    price: 179,
+    categories: ['Herb', 'Edible', 'Fragrant', 'Fast Growing'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208106/pexels-photo-6208106.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Refreshing herb perfect for teas and cooking',
+    scientificName: 'Mentha spicata',
+    careLevel: 'Easy',
+    sunlight: 'Medium',
+    watering: 'High'
+  },
+  {
+    name: 'Rosemary',
+    price: 299,
+    categories: ['Herb', 'Edible', 'Fragrant', 'Outdoor'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208107/pexels-photo-6208107.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Woody herb with needle-like aromatic leaves',
+    scientificName: 'Rosmarinus officinalis',
+    careLevel: 'Easy',
+    sunlight: 'Bright',
+    watering: 'Low'
+  },
+  {
+    name: 'Thyme Common',
+    price: 199,
+    categories: ['Herb', 'Edible', 'Small', 'Outdoor'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208108/pexels-photo-6208108.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Small-leaved herb with strong flavor',
+    scientificName: 'Thymus vulgaris',
+    careLevel: 'Easy',
+    sunlight: 'Bright',
+    watering: 'Low'
+  },
+  {
+    name: 'Oregano',
+    price: 199,
+    categories: ['Herb', 'Edible', 'Mediterranean', 'Outdoor'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208109/pexels-photo-6208109.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Essential Mediterranean cooking herb',
+    scientificName: 'Origanum vulgare',
+    careLevel: 'Easy',
+    sunlight: 'Bright',
+    watering: 'Medium'
+  },
+  // Air Purifying Plants
+  {
+    name: 'Areca Palm',
+    price: 1499,
+    categories: ['Indoor', 'Air Purifying', 'Tropical', 'Large'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208110/pexels-photo-6208110.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Graceful palm that purifies air naturally',
+    scientificName: 'Dypsis lutescens',
+    careLevel: 'Medium',
+    sunlight: 'Medium',
+    watering: 'Medium'
+  },
+  {
+    name: 'Bamboo Palm',
+    price: 1299,
+    categories: ['Indoor', 'Air Purifying', 'Tropical'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208111/pexels-photo-6208111.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Clumping palm excellent for air purification',
+    scientificName: 'Chamaedorea seifrizii',
+    careLevel: 'Medium',
+    sunlight: 'Low',
+    watering: 'Medium'
+  },
+  {
+    name: 'English Ivy',
+    price: 399,
+    categories: ['Indoor', 'Air Purifying', 'Hanging', 'Climbing'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208112/pexels-photo-6208112.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Classic ivy perfect for hanging or climbing',
+    scientificName: 'Hedera helix',
+    careLevel: 'Easy',
+    sunlight: 'Medium',
+    watering: 'Medium'
+  },
+  {
+    name: 'Aloe Vera Medicinal',
+    price: 449,
+    categories: ['Succulent', 'Medicinal', 'Air Purifying', 'Indoor'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208113/pexels-photo-6208113.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Healing aloe with air-purifying properties',
+    scientificName: 'Aloe barbadensis miller',
+    careLevel: 'Easy',
+    sunlight: 'Bright',
+    watering: 'Low'
+  },
+  {
+    name: 'Gerbera Daisy',
+    price: 399,
+    categories: ['Indoor', 'Flowering', 'Air Purifying', 'Colorful'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208114/pexels-photo-6208114.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Bright cheerful daisies that clean the air',
+    scientificName: 'Gerbera jamesonii',
+    careLevel: 'Medium',
+    sunlight: 'Bright',
+    watering: 'Medium'
+  },
+  // Flowering Indoor Plants
+  {
+    name: 'African Violet',
+    price: 349,
+    categories: ['Indoor', 'Flowering', 'Small', 'Colorful'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208115/pexels-photo-6208115.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Compact flowering plant with velvety leaves',
+    scientificName: 'Saintpaulia ionantha',
+    careLevel: 'Medium',
+    sunlight: 'Medium',
+    watering: 'Medium'
+  },
+  {
+    name: 'Cyclamen',
+    price: 449,
+    categories: ['Indoor', 'Flowering', 'Winter Blooming'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208116/pexels-photo-6208116.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Winter flowering plant with swept-back petals',
+    scientificName: 'Cyclamen persicum',
+    careLevel: 'Medium',
+    sunlight: 'Medium',
+    watering: 'Medium'
+  },
+  {
+    name: 'Begonia Flowering',
+    price: 349,
+    categories: ['Indoor', 'Flowering', 'Colorful', 'Shade Loving'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208117/pexels-photo-6208117.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Continuous blooming plant in various colors',
+    scientificName: 'Begonia semperflorens',
+    careLevel: 'Easy',
+    sunlight: 'Medium',
+    watering: 'Medium'
+  },
+  {
+    name: 'Impatiens Mixed',
+    price: 299,
+    categories: ['Indoor', 'Flowering', 'Shade Loving', 'Colorful'],
+    inStock: true,
+    image: 'https://images.pexels.com/photos/6208118/pexels-photo-6208118.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Shade-loving flowers in bright mixed colors',
+    scientificName: 'Impatiens walleriana',
+    careLevel: 'Easy',
+    sunlight: 'Low',
+    watering: 'High'
+  },
+  {
+    name: 'Orchid Phalaenopsis',
+    price: 1299,
+    categories: ['Indoor', 'Flowering', 'Elegant', 'Premium'],
+    inStock: false,
+    image: 'https://images.pexels.com/photos/6208119/pexels-photo-6208119.jpeg?auto=compress&cs=tinysrgb&w=500',
+    description: 'Elegant orchid with long-lasting blooms',
+    scientificName: 'Phalaenopsis amabilis',
+    careLevel: 'Hard',
+    sunlight: 'Medium',
+    watering: 'Low'
+  }
+];
+
+async function seedDatabase() {
+  try {
+    // Connect to MongoDB
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log('✅ Connected to MongoDB successfully');
+
+    // Clear existing plants
+    await Plant.deleteMany({});
+    console.log('🗑️  Cleared existing plants');
+
+    // Insert new plants
+    const result = await Plant.insertMany(plants);
+    console.log(`🌱 Successfully seeded ${result.length} plants`);
+
+    // Display some statistics
+    const totalPlants = await Plant.countDocuments();
+    const inStockCount = await Plant.countDocuments({ inStock: true });
+    const outOfStockCount = await Plant.countDocuments({ inStock: false });
+    
+    console.log('\n📊 Database Statistics:');
+    console.log(`   Total Plants: ${totalPlants}`);
+    console.log(`   In Stock: ${inStockCount}`);
+    console.log(`   Out of Stock: ${outOfStockCount}`);
+
+    // Get category counts
+    const categories = await Plant.aggregate([
+      { $unwind: '$categories' },
+      { $group: { _id: '$categories', count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]);
+
+    console.log('\n🏷️  Top Categories:');
+    categories.slice(0, 10).forEach(cat => {
+      console.log(`   ${cat._id}: ${cat.count} plants`);
+    });
+
+    console.log('\n🎉 Database seeding completed successfully!');
+    process.exit(0);
+  } catch (error) {
+    console.error('❌ Error seeding database:', error);
+    process.exit(1);
+  }
+}
+
+// Run the seeding function
+seedDatabase();
